@@ -1,0 +1,6 @@
+[package]
+name = "r2d2_memcached"
+version = "0.1.0"
+authors = ["Keishi Kawada <Kk-shli@outlook.jp>"]
+
+[dependencies]
