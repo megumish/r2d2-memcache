@@ -4,9 +4,4 @@ pub mod connection_info;
 pub mod error;
 pub mod connection_manager;
 
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn it_works() {
-    }
-}
+pub use connection_manager::MemcacheConnectionManager;
