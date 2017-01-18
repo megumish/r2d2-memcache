@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["Error","A unified enum of errors by memcache::Connection"]]});
