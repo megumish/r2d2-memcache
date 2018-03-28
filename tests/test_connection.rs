@@ -7,7 +7,7 @@ use r2d2_memcache::MemcacheConnectionManager;
 #[test]
 fn connect() {
     let config = r2d2::Config::default();
-    let manager = MemcacheConnectionManager::new("localhost:11211").unwrap();
+    let manager = MemcacheConnectionManager::new("memcache://localhost:11211").unwrap();
 
     let pool = r2d2::Pool::new(config, manager).unwrap();
 }
@@ -15,7 +15,7 @@ fn connect() {
 #[test]
 fn flush() {
     let config = r2d2::Config::default();
-    let manager = MemcacheConnectionManager::new("localhost:11211").unwrap();
+    let manager = MemcacheConnectionManager::new("memcache://localhost:11211").unwrap();
 
     let pool = r2d2::Pool::new(config, manager).unwrap();
 
@@ -29,7 +29,7 @@ fn flush() {
 #[test]
 fn version() {
     let config = r2d2::Config::default();
-    let manager = MemcacheConnectionManager::new("localhost:11211").unwrap();
+    let manager = MemcacheConnectionManager::new("memcache://localhost:11211").unwrap();
 
     let pool = r2d2::Pool::new(config, manager).unwrap();
 
@@ -43,20 +43,18 @@ fn version() {
 #[test]
 fn store() {
     let config = r2d2::Config::default();
-    let manager = MemcacheConnectionManager::new("localhost:11211").unwrap();
+    let manager = MemcacheConnectionManager::new("memcache://localhost:11211").unwrap();
 
     let pool = r2d2::Pool::new(config, manager).unwrap();
 
     {
         let pool = pool.clone();
         let mut conn = pool.get().unwrap();
-        let value = &memcache::Raw {
-            bytes: b"bar",
-            flags: 0,
-        };
-        conn.set("foo", value).unwrap();
-        conn.replace("foo", value).unwrap();
-        conn.add("foo", value).unwrap();
+        conn.flush().unwrap();
+        let value = "bar";
+        conn.add("foo", value, 10).unwrap();
+        conn.set("foo", value, 10).unwrap();
+        conn.replace("foo", value, 10).unwrap();
         conn.append("foo", value).unwrap();
         conn.prepend("foo", value).unwrap();
     }
@@ -65,28 +63,24 @@ fn store() {
 #[test]
 fn get() {
     let config = r2d2::Config::default();
-    let manager = MemcacheConnectionManager::new("localhost:11211").unwrap();
+    let manager = MemcacheConnectionManager::new("memcache://localhost:11211").unwrap();
 
     let pool = r2d2::Pool::new(config, manager).unwrap();
     {
         let pool = pool.clone();
         let mut conn = pool.get().unwrap();
         conn.flush().unwrap();
-        let value = &memcache::Raw {
-            bytes: b"bar",
-            flags: 0,
-        };
-        conn.set("foo_get", value).unwrap();
-        let result: (Vec<u8>, u16) = conn.get("foo_get").unwrap();
-        assert!(result.0 == b"bar");
-        assert!(result.1 == 0);
+        let value = "bar";
+        conn.set("foo_get", value, 10).unwrap();
+        let result: String = conn.get("foo_get").unwrap().unwrap();
+        assert!(result == "bar");
     }
 }
 
 #[test]
 fn delete() {
     let config = r2d2::Config::default();
-    let manager = MemcacheConnectionManager::new("localhost:11211").unwrap();
+    let manager = MemcacheConnectionManager::new("memcache://localhost:11211").unwrap();
 
     let pool = r2d2::Pool::new(config, manager).unwrap();
     {
@@ -97,37 +91,33 @@ fn delete() {
 }
 
 #[test]
-fn incr() {
+fn increment() {
     let config = r2d2::Config::default();
-    let manager = MemcacheConnectionManager::new("localhost:11211").unwrap();
+    let manager = MemcacheConnectionManager::new("memcache://localhost:11211").unwrap();
 
     let pool = r2d2::Pool::new(config, manager).unwrap();
     {
         let pool = pool.clone();
         let mut conn = pool.get().unwrap();
-        let value = &memcache::Raw {
-            bytes: b"100",
-            flags: 0
-        };
-        conn.set("foo_incr", value).unwrap();
-        assert!(conn.incr("foo_incr", 1).unwrap() == Some(101));
+        conn.flush().unwrap();
+        let value = 100;
+        conn.set("foo_increment", value, 0).unwrap();
+        assert_eq!(conn.increment("foo_increment", 1).unwrap(), 101);
     }
 }
 
 #[test]
-fn decr() {
+fn decrement() {
     let config = r2d2::Config::default();
-    let manager = MemcacheConnectionManager::new("localhost:11211").unwrap();
+    let manager = MemcacheConnectionManager::new("memcache://localhost:11211").unwrap();
 
     let pool = r2d2::Pool::new(config, manager).unwrap();
     {
         let pool = pool.clone();
         let mut conn = pool.get().unwrap();
-        let value = &memcache::Raw {
-            bytes: b"100",
-            flags: 0
-        };
-        conn.set("foo_decr", value).unwrap();
-        assert!(conn.decr("foo_decr", 1).unwrap() == Some(99));
+        conn.flush().unwrap();
+        let value = 100;
+        conn.set("foo_decrement", value, 0).unwrap();
+        assert_eq!(conn.decrement("foo_decrement", 1).unwrap(), 99);
     }
 }

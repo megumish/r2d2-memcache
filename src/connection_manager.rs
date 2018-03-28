@@ -23,21 +23,21 @@ impl MemcacheConnectionManager {
 }
 
 impl r2d2::ManageConnection for MemcacheConnectionManager {
-    type Connection = memcache::Connection;
+    type Connection = memcache::Client;
     type Error = Error;
 
-    fn connect(&self) -> Result<memcache::Connection, Error> {
-        memcache::Connection::connect(self.connection_info.clone()).map_err(Error::Other)
+    fn connect(&self) -> Result<memcache::Client, Error> {
+        memcache::Client::new(self.connection_info.clone().addr.as_str()).map_err(Error::Other)
     }
 
-    fn is_valid(&self, connection: &mut memcache::Connection) -> Result<(), Error> {
+    fn is_valid(&self, connection: &mut memcache::Client) -> Result<(), Error> {
         match connection.version() {
             Ok(_) => Ok(()),
             Err(err) => Err(Error::Other(err))
         }
     }
 
-    fn has_broken(&self, _connection: &mut memcache::Connection) -> bool {
+    fn has_broken(&self, _connection: &mut memcache::Client) -> bool {
         false
     }
 }
