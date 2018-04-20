@@ -1,33 +1,31 @@
 extern crate memcache;
 extern crate r2d2;
 
-use connection_info::{ConnectionInfo, IntoConnectionInfo};
 use error::Error;
 
 #[derive(Debug)]
-pub struct MemcacheConnectionManager {
-    connection_info: ConnectionInfo
+pub struct MemcacheConnectionManager<'a> {
+    urls: Vec<&'a str>
 }
 
-impl MemcacheConnectionManager {
+impl<'a> MemcacheConnectionManager<'a> {
     /// Creates a new `MemcacheConnectionManager`.
     ///
     /// See `memcache::Connection::connect` for a description of the parameter
     /// types.
-    pub fn new<T: IntoConnectionInfo>(params: T)
-            -> Result<MemcacheConnectionManager, memcache::MemcacheError>  {
+    pub fn new<C: memcache::Connectable<'a>>(target: C) -> Result<MemcacheConnectionManager<'a>, memcache::MemcacheError>  {
         Ok(MemcacheConnectionManager {
-            connection_info: try!(params.into_connection_info())
+            urls: target.get_urls()
         })
     }
 }
 
-impl r2d2::ManageConnection for MemcacheConnectionManager {
+impl r2d2::ManageConnection for MemcacheConnectionManager<'static> {
     type Connection = memcache::Client;
     type Error = Error;
 
     fn connect(&self) -> Result<memcache::Client, Error> {
-        memcache::Client::new(self.connection_info.clone().addr.as_str()).map_err(Error::Other)
+        memcache::Client::new(self.urls.clone()).map_err(Error::Other)
     }
 
     fn is_valid(&self, connection: &mut memcache::Client) -> Result<(), Error> {
