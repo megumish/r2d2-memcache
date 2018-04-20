@@ -7,7 +7,7 @@ use r2d2_memcache::MemcacheConnectionManager;
 #[test]
 fn connect() {
     let config = r2d2::Config::default();
-    let manager = MemcacheConnectionManager::new("memcache://localhost:11211").unwrap();
+    let manager = MemcacheConnectionManager::new("memcache://localhost:11211");
 
     let pool = r2d2::Pool::new(config, manager).unwrap();
 }
@@ -15,7 +15,7 @@ fn connect() {
 #[test]
 fn flush() {
     let config = r2d2::Config::default();
-    let manager = MemcacheConnectionManager::new("memcache://localhost:11211").unwrap();
+    let manager = MemcacheConnectionManager::new("memcache://localhost:11211");
 
     let pool = r2d2::Pool::new(config, manager).unwrap();
 
@@ -29,7 +29,7 @@ fn flush() {
 #[test]
 fn version() {
     let config = r2d2::Config::default();
-    let manager = MemcacheConnectionManager::new("memcache://localhost:11211").unwrap();
+    let manager = MemcacheConnectionManager::new("memcache://localhost:11211");
 
     let pool = r2d2::Pool::new(config, manager).unwrap();
 
@@ -43,7 +43,7 @@ fn version() {
 #[test]
 fn store() {
     let config = r2d2::Config::default();
-    let manager = MemcacheConnectionManager::new("memcache://localhost:11211").unwrap();
+    let manager = MemcacheConnectionManager::new("memcache://localhost:11211");
 
     let pool = r2d2::Pool::new(config, manager).unwrap();
 
@@ -63,7 +63,7 @@ fn store() {
 #[test]
 fn get() {
     let config = r2d2::Config::default();
-    let manager = MemcacheConnectionManager::new("memcache://localhost:11211").unwrap();
+    let manager = MemcacheConnectionManager::new("memcache://localhost:11211");
 
     let pool = r2d2::Pool::new(config, manager).unwrap();
     {
@@ -80,7 +80,7 @@ fn get() {
 #[test]
 fn delete() {
     let config = r2d2::Config::default();
-    let manager = MemcacheConnectionManager::new("memcache://localhost:11211").unwrap();
+    let manager = MemcacheConnectionManager::new("memcache://localhost:11211");
 
     let pool = r2d2::Pool::new(config, manager).unwrap();
     {
@@ -93,7 +93,7 @@ fn delete() {
 #[test]
 fn increment() {
     let config = r2d2::Config::default();
-    let manager = MemcacheConnectionManager::new("memcache://localhost:11211").unwrap();
+    let manager = MemcacheConnectionManager::new("memcache://localhost:11211");
 
     let pool = r2d2::Pool::new(config, manager).unwrap();
     {
@@ -109,7 +109,7 @@ fn increment() {
 #[test]
 fn decrement() {
     let config = r2d2::Config::default();
-    let manager = MemcacheConnectionManager::new("memcache://localhost:11211").unwrap();
+    let manager = MemcacheConnectionManager::new("memcache://localhost:11211");
 
     let pool = r2d2::Pool::new(config, manager).unwrap();
     {

@@ -13,10 +13,8 @@ impl<'a> MemcacheConnectionManager<'a> {
     ///
     /// See `memcache::Connection::connect` for a description of the parameter
     /// types.
-    pub fn new<C: memcache::Connectable<'a>>(
-        target: C,
-    ) -> Result<MemcacheConnectionManager<'a>, memcache::MemcacheError> {
-        Ok(MemcacheConnectionManager { urls: target.get_urls() })
+    pub fn new<C: memcache::Connectable<'a>>(target: C) -> MemcacheConnectionManager<'a> {
+        MemcacheConnectionManager { urls: target.get_urls() }
     }
 }
 

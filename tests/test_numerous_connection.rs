@@ -8,7 +8,7 @@ use std::thread;
 #[test]
 fn get_thousand_data_parallel() {
     let config = r2d2::Config::default();
-    let manager = MemcacheConnectionManager::new("memcache://localhost:11211").unwrap();
+    let manager = MemcacheConnectionManager::new("memcache://localhost:11211");
 
     let pool = r2d2::Pool::new(config, manager).unwrap();
     {
