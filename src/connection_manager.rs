@@ -5,7 +5,7 @@ use error::Error;
 
 #[derive(Debug)]
 pub struct MemcacheConnectionManager<'a> {
-    urls: Vec<&'a str>
+    urls: Vec<&'a str>,
 }
 
 impl<'a> MemcacheConnectionManager<'a> {
@@ -13,10 +13,10 @@ impl<'a> MemcacheConnectionManager<'a> {
     ///
     /// See `memcache::Connection::connect` for a description of the parameter
     /// types.
-    pub fn new<C: memcache::Connectable<'a>>(target: C) -> Result<MemcacheConnectionManager<'a>, memcache::MemcacheError>  {
-        Ok(MemcacheConnectionManager {
-            urls: target.get_urls()
-        })
+    pub fn new<C: memcache::Connectable<'a>>(
+        target: C,
+    ) -> Result<MemcacheConnectionManager<'a>, memcache::MemcacheError> {
+        Ok(MemcacheConnectionManager { urls: target.get_urls() })
     }
 }
 
@@ -31,7 +31,7 @@ impl r2d2::ManageConnection for MemcacheConnectionManager<'static> {
     fn is_valid(&self, connection: &mut memcache::Client) -> Result<(), Error> {
         match connection.version() {
             Ok(_) => Ok(()),
-            Err(err) => Err(Error::Other(err))
+            Err(err) => Err(Error::Other(err)),
         }
     }
 
