@@ -8,7 +8,7 @@ use std::thread;
 #[test]
 fn get_thousand_data_parallel() {
     let config = r2d2::Config::default();
-    let manager = MemcacheConnectionManager::new("memcache://localhost:11211").unwrap();
+    let manager = MemcacheConnectionManager::new("memcache://localhost:11211");
 
     let pool = r2d2::Pool::new(config, manager).unwrap();
     {
@@ -22,7 +22,8 @@ fn get_thousand_data_parallel() {
             let mut conn = pool.get().unwrap();
             conn.flush().unwrap();
             let value = format!{"{}{}","bar_thousand",i};
-            conn.set(&format!("{}{}","foo_thousand", i), value, 0).unwrap();
+            conn.set(&format!("{}{}", "foo_thousand", i), value, 0)
+                .unwrap();
         });
     }
     for i in 0..1000 {
@@ -30,9 +31,10 @@ fn get_thousand_data_parallel() {
         thread::spawn(move || {
             let value = format!{"{}{}","bar_thousand",i};
             let mut conn = pool.get().unwrap();
-            let result: String = conn.get(&format!("{}{}","foo_thousand", i)).unwrap().unwrap();
+            let result: String = conn.get(&format!("{}{}", "foo_thousand", i))
+                .unwrap()
+                .unwrap();
             assert!(result == value);
         });
     }
 }
-
