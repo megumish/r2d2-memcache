@@ -9,4 +9,4 @@ keywords = ["memcached", "memcache", "pool", "nosql", "database"]
 
 [dependencies]
 r2d2 = "0.7"
-memcache = "0.7.1"
+memcache = "0.9"
