@@ -1,8 +1,9 @@
 [package]
 name = "r2d2-memcache"
 version = "0.2.0"
-authors = ["Keishi Kawada <Kk-shli@outlook.jp>", "An Long"]
+authors = ["Keishi Kawada <Kk-shli@outlook.jp>", "An Long <aisk1988@gmail.com>"]
 license = "MIT"
+readme = "README.md"
 description = "Memcached support for the r2d2 connection pool"
 repository = "https://github.com/megumish/r2d2-memcache"
 keywords = ["memcached", "memcache", "pool", "nosql", "database"]
