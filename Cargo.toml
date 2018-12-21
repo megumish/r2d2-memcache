@@ -1,7 +1,7 @@
 [package]
 name = "r2d2-memcache"
-version = "0.1.2"
-authors = ["Keishi Kawada <Kk-shli@outlook.jp>"]
+version = "0.2.0"
+authors = ["Keishi Kawada <Kk-shli@outlook.jp>", "An Long"]
 license = "MIT"
 description = "Memcached support for the r2d2 connection pool"
 repository = "https://github.com/megumish/r2d2-memcache"
