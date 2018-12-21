@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["connection_info",""],["connection_manager",""],["error",""]]});
+initSidebarItems({"mod":[["connection_manager",""],["error",""]]});

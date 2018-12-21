@@ -1,48 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/automatic-aiwolf/.cargo/registry/src/github.com-1ecc6299db9ec823/r2d2-0.7.1/src/config.rs`.">
-    <meta name="keywords" content="rust, rustlang, rust-lang">
-
-    <title>config.rs.html -- source</title>
-
-    <link rel="stylesheet" type="text/css" href="../../rustdoc.css">
-    <link rel="stylesheet" type="text/css" href="../../main.css">
-    
-
-    
-    
-</head>
-<body class="rustdoc">
-    <!--[if lte IE 8]>
-    <div class="warning">
-        This old browser is unsupported and will most likely display funky
-        things.
-    </div>
-    <![endif]-->
-
-    
-
-    <nav class="sidebar">
-        
-        
-    </nav>
-
-    <nav class="sub">
-        <form class="search-form js-only">
-            <div class="search-container">
-                <input class="search-input" name="search"
-                       autocomplete="off"
-                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
-                       type="search">
-            </div>
-        </form>
-    </nav>
-
-    <section id='main' class="content source"><pre class="line-numbers"><span id="1">  1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/Users/anlong/.cargo/registry/src/github.com-1ecc6299db9ec823/r2d2-0.8.3/src/config.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>config.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -332,433 +288,296 @@
 <span id="288">288</span>
 <span id="289">289</span>
 <span id="290">290</span>
-<span id="291">291</span>
-<span id="292">292</span>
-<span id="293">293</span>
-<span id="294">294</span>
-<span id="295">295</span>
-<span id="296">296</span>
-<span id="297">297</span>
-<span id="298">298</span>
-<span id="299">299</span>
-<span id="300">300</span>
-<span id="301">301</span>
-<span id="302">302</span>
-<span id="303">303</span>
-<span id="304">304</span>
-<span id="305">305</span>
-<span id="306">306</span>
-<span id="307">307</span>
-<span id="308">308</span>
-<span id="309">309</span>
-<span id="310">310</span>
-<span id="311">311</span>
-<span id="312">312</span>
-<span id="313">313</span>
-<span id="314">314</span>
-<span id="315">315</span>
-<span id="316">316</span>
-<span id="317">317</span>
-<span id="318">318</span>
-<span id="319">319</span>
-<span id="320">320</span>
-<span id="321">321</span>
-<span id="322">322</span>
-<span id="323">323</span>
-<span id="324">324</span>
-<span id="325">325</span>
-<span id="326">326</span>
-<span id="327">327</span>
-<span id="328">328</span>
-</pre><pre class='rust '>
-<span class='doccomment'>//! Pool configuration.</span>
-<span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>fmt</span>;
-<span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>time</span>::<span class='ident'>Duration</span>;
-<span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>error</span>::<span class='ident'>Error</span>;
+</pre><pre class="rust ">
+<span class="kw">use</span> <span class="ident">scheduled_thread_pool</span>::<span class="ident">ScheduledThreadPool</span>;
+<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">fmt</span>;
+<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">marker</span>::<span class="ident">PhantomData</span>;
+<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">sync</span>::<span class="ident">Arc</span>;
+<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">time</span>::<span class="ident">Duration</span>;
 
-<span class='kw'>use</span> {<span class='ident'>HandleError</span>, <span class='ident'>LoggingErrorHandler</span>, <span class='ident'>CustomizeConnection</span>, <span class='ident'>NopConnectionCustomizer</span>};
+<span class="kw">use</span> {
+    <span class="ident">CustomizeConnection</span>, <span class="ident">Error</span>, <span class="ident">HandleError</span>, <span class="ident">LoggingErrorHandler</span>, <span class="ident">ManageConnection</span>,
+    <span class="ident">NopConnectionCustomizer</span>, <span class="ident">Pool</span>,
+};
 
-<span class='doccomment'>/// A builder for `Config`.</span>
-<span class='doccomment'>///</span>
-<span class='doccomment'>/// See the documentation of `Config` for more details about the default value</span>
-<span class='doccomment'>/// and meaning of the configuration parameters.</span>
-<span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Debug</span>)]</span>
-<span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>Builder</span><span class='op'>&lt;</span><span class='ident'>C</span>, <span class='ident'>E</span><span class='op'>&gt;</span> {
-    <span class='ident'>c</span>: <span class='ident'>Config</span><span class='op'>&lt;</span><span class='ident'>C</span>, <span class='ident'>E</span><span class='op'>&gt;</span>,
+<span class="doccomment">/// A builder for a connection pool.</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Builder</span><span class="op">&lt;</span><span class="ident">M</span><span class="op">&gt;</span>
+<span class="kw">where</span>
+    <span class="ident">M</span>: <span class="ident">ManageConnection</span>,
+{
+    <span class="ident">max_size</span>: <span class="ident">u32</span>,
+    <span class="ident">min_idle</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">u32</span><span class="op">&gt;</span>,
+    <span class="ident">test_on_check_out</span>: <span class="ident">bool</span>,
+    <span class="ident">max_lifetime</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Duration</span><span class="op">&gt;</span>,
+    <span class="ident">idle_timeout</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Duration</span><span class="op">&gt;</span>,
+    <span class="ident">connection_timeout</span>: <span class="ident">Duration</span>,
+    <span class="ident">error_handler</span>: <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">HandleError</span><span class="op">&lt;</span><span class="ident">M</span>::<span class="ident">Error</span><span class="op">&gt;&gt;</span>,
+    <span class="ident">connection_customizer</span>: <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">CustomizeConnection</span><span class="op">&lt;</span><span class="ident">M</span>::<span class="ident">Connection</span>, <span class="ident">M</span>::<span class="ident">Error</span><span class="op">&gt;&gt;</span>,
+    <span class="ident">thread_pool</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">ScheduledThreadPool</span><span class="op">&gt;&gt;</span>,
+    <span class="ident">reaper_rate</span>: <span class="ident">Duration</span>,
+    <span class="ident">_p</span>: <span class="ident">PhantomData</span><span class="op">&lt;</span><span class="ident">M</span><span class="op">&gt;</span>,
 }
 
-<span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>C</span>, <span class='ident'>E</span>: <span class='ident'>Error</span><span class='op'>&gt;</span> <span class='ident'>Builder</span><span class='op'>&lt;</span><span class='ident'>C</span>, <span class='ident'>E</span><span class='op'>&gt;</span> {
-    <span class='doccomment'>/// Constructs a new `Builder`.</span>
-    <span class='doccomment'>///</span>
-    <span class='doccomment'>/// Parameters are initialized with their default values.</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>new</span>() <span class='op'>-&gt;</span> <span class='ident'>Builder</span><span class='op'>&lt;</span><span class='ident'>C</span>, <span class='ident'>E</span><span class='op'>&gt;</span> {
-        <span class='ident'>Builder</span> { <span class='ident'>c</span>: <span class='ident'>Config</span>::<span class='ident'>default</span>() }
-    }
-
-    <span class='doccomment'>/// Sets `pool_size`.</span>
-    <span class='doccomment'>///</span>
-    <span class='doccomment'>/// # Panics</span>
-    <span class='doccomment'>///</span>
-    <span class='doccomment'>/// Panics if `pool_size` is 0.</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>pool_size</span>(<span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>pool_size</span>: <span class='ident'>u32</span>) <span class='op'>-&gt;</span> <span class='ident'>Builder</span><span class='op'>&lt;</span><span class='ident'>C</span>, <span class='ident'>E</span><span class='op'>&gt;</span> {
-        <span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>pool_size</span> <span class='op'>&gt;</span> <span class='number'>0</span>, <span class='string'>&quot;pool_size must be positive&quot;</span>);
-        <span class='self'>self</span>.<span class='ident'>c</span>.<span class='ident'>pool_size</span> <span class='op'>=</span> <span class='ident'>pool_size</span>;
-        <span class='self'>self</span>
-    }
-
-    <span class='doccomment'>/// Sets `min_idle`.</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>min_idle</span>(<span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>min_idle</span>: <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>u32</span><span class='op'>&gt;</span>) <span class='op'>-&gt;</span> <span class='ident'>Builder</span><span class='op'>&lt;</span><span class='ident'>C</span>, <span class='ident'>E</span><span class='op'>&gt;</span> {
-        <span class='self'>self</span>.<span class='ident'>c</span>.<span class='ident'>min_idle</span> <span class='op'>=</span> <span class='ident'>min_idle</span>;
-        <span class='self'>self</span>
-    }
-
-    <span class='doccomment'>/// Sets `helper_threads`.</span>
-    <span class='doccomment'>///</span>
-    <span class='doccomment'>/// # Panics</span>
-    <span class='doccomment'>///</span>
-    <span class='doccomment'>/// Panics if `helper_threads` is 0.</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>helper_threads</span>(<span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>helper_threads</span>: <span class='ident'>u32</span>) <span class='op'>-&gt;</span> <span class='ident'>Builder</span><span class='op'>&lt;</span><span class='ident'>C</span>, <span class='ident'>E</span><span class='op'>&gt;</span> {
-        <span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>helper_threads</span> <span class='op'>&gt;</span> <span class='number'>0</span>, <span class='string'>&quot;helper_threads must be positive&quot;</span>);
-        <span class='self'>self</span>.<span class='ident'>c</span>.<span class='ident'>helper_threads</span> <span class='op'>=</span> <span class='ident'>helper_threads</span>;
-        <span class='self'>self</span>
-    }
-
-    <span class='doccomment'>/// Sets `test_on_check_out`.</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>test_on_check_out</span>(<span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>test_on_check_out</span>: <span class='ident'>bool</span>) <span class='op'>-&gt;</span> <span class='ident'>Builder</span><span class='op'>&lt;</span><span class='ident'>C</span>, <span class='ident'>E</span><span class='op'>&gt;</span> {
-        <span class='self'>self</span>.<span class='ident'>c</span>.<span class='ident'>test_on_check_out</span> <span class='op'>=</span> <span class='ident'>test_on_check_out</span>;
-        <span class='self'>self</span>
-    }
-
-    <span class='doccomment'>/// Sets `initialization_fail_fast`.</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>initialization_fail_fast</span>(<span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>initialization_fail_fast</span>: <span class='ident'>bool</span>) <span class='op'>-&gt;</span> <span class='ident'>Builder</span><span class='op'>&lt;</span><span class='ident'>C</span>, <span class='ident'>E</span><span class='op'>&gt;</span> {
-        <span class='self'>self</span>.<span class='ident'>c</span>.<span class='ident'>initialization_fail_fast</span> <span class='op'>=</span> <span class='ident'>initialization_fail_fast</span>;
-        <span class='self'>self</span>
-    }
-
-    <span class='doccomment'>/// Sets `max_lifetime`.</span>
-    <span class='doccomment'>///</span>
-    <span class='doccomment'>/// # Panics</span>
-    <span class='doccomment'>///</span>
-    <span class='doccomment'>/// Panics if `max_lifetime` is the zero `Duration`.</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>max_lifetime</span>(<span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>max_lifetime</span>: <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>Duration</span><span class='op'>&gt;</span>) <span class='op'>-&gt;</span> <span class='ident'>Builder</span><span class='op'>&lt;</span><span class='ident'>C</span>, <span class='ident'>E</span><span class='op'>&gt;</span> {
-        <span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>max_lifetime</span> <span class='op'>!=</span> <span class='prelude-val'>Some</span>(<span class='ident'>Duration</span>::<span class='ident'>from_secs</span>(<span class='number'>0</span>)),
-                <span class='string'>&quot;max_lifetime must be positive&quot;</span>);
-        <span class='self'>self</span>.<span class='ident'>c</span>.<span class='ident'>max_lifetime</span> <span class='op'>=</span> <span class='ident'>max_lifetime</span>;
-        <span class='self'>self</span>
-    }
-
-    <span class='doccomment'>/// Sets `idle_timeout`.</span>
-    <span class='doccomment'>///</span>
-    <span class='doccomment'>/// # Panics</span>
-    <span class='doccomment'>///</span>
-    <span class='doccomment'>/// Panics if `idle_timeout` is the zero `Duration`.</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>idle_timeout</span>(<span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>idle_timeout</span>: <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>Duration</span><span class='op'>&gt;</span>) <span class='op'>-&gt;</span> <span class='ident'>Builder</span><span class='op'>&lt;</span><span class='ident'>C</span>, <span class='ident'>E</span><span class='op'>&gt;</span> {
-        <span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>idle_timeout</span> <span class='op'>!=</span> <span class='prelude-val'>Some</span>(<span class='ident'>Duration</span>::<span class='ident'>from_secs</span>(<span class='number'>0</span>)),
-                <span class='string'>&quot;idle_timeout must be positive&quot;</span>);
-        <span class='self'>self</span>.<span class='ident'>c</span>.<span class='ident'>idle_timeout</span> <span class='op'>=</span> <span class='ident'>idle_timeout</span>;
-        <span class='self'>self</span>
-    }
-
-    <span class='doccomment'>/// Sets `connection_timeout` to the specified duration.</span>
-    <span class='doccomment'>///</span>
-    <span class='doccomment'>/// # Panics</span>
-    <span class='doccomment'>///</span>
-    <span class='doccomment'>/// Panics if `connection_timeout` is the zero duration</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>connection_timeout</span>(<span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>connection_timeout</span>: <span class='ident'>Duration</span>) <span class='op'>-&gt;</span> <span class='ident'>Builder</span><span class='op'>&lt;</span><span class='ident'>C</span>, <span class='ident'>E</span><span class='op'>&gt;</span> {
-        <span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>connection_timeout</span> <span class='op'>&gt;</span> <span class='ident'>Duration</span>::<span class='ident'>from_secs</span>(<span class='number'>0</span>),
-                <span class='string'>&quot;connection_timeout must be positive&quot;</span>);
-        <span class='self'>self</span>.<span class='ident'>c</span>.<span class='ident'>connection_timeout</span> <span class='op'>=</span> <span class='ident'>connection_timeout</span>;
-        <span class='self'>self</span>
-    }
-
-    <span class='doccomment'>/// Sets the `error_handler`.</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>error_handler</span>(<span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>error_handler</span>: <span class='ident'>Box</span><span class='op'>&lt;</span><span class='ident'>HandleError</span><span class='op'>&lt;</span><span class='ident'>E</span><span class='op'>&gt;&gt;</span>) <span class='op'>-&gt;</span> <span class='ident'>Builder</span><span class='op'>&lt;</span><span class='ident'>C</span>, <span class='ident'>E</span><span class='op'>&gt;</span> {
-        <span class='self'>self</span>.<span class='ident'>c</span>.<span class='ident'>error_handler</span> <span class='op'>=</span> <span class='ident'>error_handler</span>;
-        <span class='self'>self</span>
-    }
-
-    <span class='doccomment'>/// Sets the `connection_customizer`.</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>connection_customizer</span>(<span class='kw-2'>mut</span> <span class='self'>self</span>,
-                                 <span class='ident'>connection_customizer</span>: <span class='ident'>Box</span><span class='op'>&lt;</span><span class='ident'>CustomizeConnection</span><span class='op'>&lt;</span><span class='ident'>C</span>, <span class='ident'>E</span><span class='op'>&gt;&gt;</span>)
-                                 <span class='op'>-&gt;</span> <span class='ident'>Builder</span><span class='op'>&lt;</span><span class='ident'>C</span>, <span class='ident'>E</span><span class='op'>&gt;</span> {
-        <span class='self'>self</span>.<span class='ident'>c</span>.<span class='ident'>connection_customizer</span> <span class='op'>=</span> <span class='ident'>connection_customizer</span>;
-        <span class='self'>self</span>
-    }
-
-    <span class='doccomment'>/// Consumes the `Builder`, turning it into a `Config`.</span>
-    <span class='doccomment'>///</span>
-    <span class='doccomment'>/// # Panics</span>
-    <span class='doccomment'>///</span>
-    <span class='doccomment'>/// Panics if `min_idle` is larger than `pool_size`.</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>build</span>(<span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>Config</span><span class='op'>&lt;</span><span class='ident'>C</span>, <span class='ident'>E</span><span class='op'>&gt;</span> {
-        <span class='kw'>if</span> <span class='kw'>let</span> <span class='prelude-val'>Some</span>(<span class='ident'>min_idle</span>) <span class='op'>=</span> <span class='self'>self</span>.<span class='ident'>c</span>.<span class='ident'>min_idle</span> {
-            <span class='macro'>assert</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>c</span>.<span class='ident'>pool_size</span> <span class='op'>&gt;=</span> <span class='ident'>min_idle</span>,
-                    <span class='string'>&quot;min_idle must be no larger than pool_size&quot;</span>);
-        }
-
-        <span class='self'>self</span>.<span class='ident'>c</span>
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">M</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="ident">Debug</span> <span class="kw">for</span> <span class="ident">Builder</span><span class="op">&lt;</span><span class="ident">M</span><span class="op">&gt;</span>
+<span class="kw">where</span>
+    <span class="ident">M</span>: <span class="ident">ManageConnection</span>,
+{
+    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">fmt</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span>) <span class="op">-&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
+        <span class="ident">fmt</span>.<span class="ident">debug_struct</span>(<span class="string">&quot;Builder&quot;</span>)
+            .<span class="ident">field</span>(<span class="string">&quot;max_size&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">max_size</span>)
+            .<span class="ident">field</span>(<span class="string">&quot;min_idle&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">min_idle</span>)
+            .<span class="ident">field</span>(<span class="string">&quot;test_on_check_out&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">test_on_check_out</span>)
+            .<span class="ident">field</span>(<span class="string">&quot;max_lifetime&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">max_lifetime</span>)
+            .<span class="ident">field</span>(<span class="string">&quot;idle_timeout&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">idle_timeout</span>)
+            .<span class="ident">field</span>(<span class="string">&quot;connection_timeout&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">connection_timeout</span>)
+            .<span class="ident">field</span>(<span class="string">&quot;error_handler&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">error_handler</span>)
+            .<span class="ident">field</span>(<span class="string">&quot;connection_customizer&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">connection_customizer</span>)
+            .<span class="ident">finish</span>()
     }
 }
 
-<span class='doccomment'>/// A struct specifying the runtime configuration of a pool.</span>
-<span class='doccomment'>///</span>
-<span class='doccomment'>/// `Config` implements `Default`, which provides a set of reasonable default</span>
-<span class='doccomment'>/// values. It can be constructed using a `Builder`.</span>
-<span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>Config</span><span class='op'>&lt;</span><span class='ident'>C</span>, <span class='ident'>E</span><span class='op'>&gt;</span> {
-    <span class='ident'>pool_size</span>: <span class='ident'>u32</span>,
-    <span class='ident'>min_idle</span>: <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>u32</span><span class='op'>&gt;</span>,
-    <span class='ident'>helper_threads</span>: <span class='ident'>u32</span>,
-    <span class='ident'>test_on_check_out</span>: <span class='ident'>bool</span>,
-    <span class='ident'>initialization_fail_fast</span>: <span class='ident'>bool</span>,
-    <span class='ident'>max_lifetime</span>: <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>Duration</span><span class='op'>&gt;</span>,
-    <span class='ident'>idle_timeout</span>: <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>Duration</span><span class='op'>&gt;</span>,
-    <span class='ident'>connection_timeout</span>: <span class='ident'>Duration</span>,
-    <span class='ident'>error_handler</span>: <span class='ident'>Box</span><span class='op'>&lt;</span><span class='ident'>HandleError</span><span class='op'>&lt;</span><span class='ident'>E</span><span class='op'>&gt;&gt;</span>,
-    <span class='ident'>connection_customizer</span>: <span class='ident'>Box</span><span class='op'>&lt;</span><span class='ident'>CustomizeConnection</span><span class='op'>&lt;</span><span class='ident'>C</span>, <span class='ident'>E</span><span class='op'>&gt;&gt;</span>,
-}
-
-<span class='comment'>// manual to avoid bounds on C and E</span>
-<span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>C</span>, <span class='ident'>E</span><span class='op'>&gt;</span> <span class='ident'>fmt</span>::<span class='ident'>Debug</span> <span class='kw'>for</span> <span class='ident'>Config</span><span class='op'>&lt;</span><span class='ident'>C</span>, <span class='ident'>E</span><span class='op'>&gt;</span> {
-    <span class='kw'>fn</span> <span class='ident'>fmt</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>fmt</span>: <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>fmt</span>::<span class='ident'>Formatter</span>) <span class='op'>-&gt;</span> <span class='ident'>fmt</span>::<span class='prelude-ty'>Result</span> {
-        <span class='ident'>fmt</span>.<span class='ident'>debug_struct</span>(<span class='string'>&quot;Config&quot;</span>)
-           .<span class='ident'>field</span>(<span class='string'>&quot;pool_size&quot;</span>, <span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>pool_size</span>)
-           .<span class='ident'>field</span>(<span class='string'>&quot;min_idle&quot;</span>, <span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>min_idle</span>)
-           .<span class='ident'>field</span>(<span class='string'>&quot;helper_threads&quot;</span>, <span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>helper_threads</span>)
-           .<span class='ident'>field</span>(<span class='string'>&quot;test_on_check_out&quot;</span>, <span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>test_on_check_out</span>)
-           .<span class='ident'>field</span>(<span class='string'>&quot;initialization_fail_fast&quot;</span>, <span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>initialization_fail_fast</span>)
-           .<span class='ident'>field</span>(<span class='string'>&quot;max_lifetime&quot;</span>, <span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>max_lifetime</span>)
-           .<span class='ident'>field</span>(<span class='string'>&quot;idle_timeout&quot;</span>, <span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>idle_timeout</span>)
-           .<span class='ident'>field</span>(<span class='string'>&quot;connection_timeout&quot;</span>, <span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>connection_timeout</span>)
-           .<span class='ident'>field</span>(<span class='string'>&quot;error_handler&quot;</span>, <span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>error_handler</span>)
-           .<span class='ident'>field</span>(<span class='string'>&quot;connection_customizer&quot;</span>, <span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>connection_customizer</span>)
-           .<span class='ident'>finish</span>()
-    }
-}
-
-<span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>C</span>, <span class='ident'>E</span>: <span class='ident'>Error</span><span class='op'>&gt;</span> <span class='ident'>Default</span> <span class='kw'>for</span> <span class='ident'>Config</span><span class='op'>&lt;</span><span class='ident'>C</span>, <span class='ident'>E</span><span class='op'>&gt;</span> {
-    <span class='kw'>fn</span> <span class='ident'>default</span>() <span class='op'>-&gt;</span> <span class='ident'>Config</span><span class='op'>&lt;</span><span class='ident'>C</span>, <span class='ident'>E</span><span class='op'>&gt;</span> {
-        <span class='ident'>Config</span> {
-            <span class='ident'>pool_size</span>: <span class='number'>10</span>,
-            <span class='ident'>min_idle</span>: <span class='prelude-val'>None</span>,
-            <span class='ident'>helper_threads</span>: <span class='number'>3</span>,
-            <span class='ident'>test_on_check_out</span>: <span class='bool-val'>true</span>,
-            <span class='ident'>initialization_fail_fast</span>: <span class='bool-val'>true</span>,
-            <span class='ident'>idle_timeout</span>: <span class='prelude-val'>Some</span>(<span class='ident'>Duration</span>::<span class='ident'>from_secs</span>(<span class='number'>10</span> <span class='op'>*</span> <span class='number'>60</span>)),
-            <span class='ident'>max_lifetime</span>: <span class='prelude-val'>Some</span>(<span class='ident'>Duration</span>::<span class='ident'>from_secs</span>(<span class='number'>30</span> <span class='op'>*</span> <span class='number'>60</span>)),
-            <span class='ident'>connection_timeout</span>: <span class='ident'>Duration</span>::<span class='ident'>from_secs</span>(<span class='number'>30</span>),
-            <span class='ident'>error_handler</span>: <span class='ident'>Box</span>::<span class='ident'>new</span>(<span class='ident'>LoggingErrorHandler</span>),
-            <span class='ident'>connection_customizer</span>: <span class='ident'>Box</span>::<span class='ident'>new</span>(<span class='ident'>NopConnectionCustomizer</span>),
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">M</span><span class="op">&gt;</span> <span class="ident">Default</span> <span class="kw">for</span> <span class="ident">Builder</span><span class="op">&lt;</span><span class="ident">M</span><span class="op">&gt;</span>
+<span class="kw">where</span>
+    <span class="ident">M</span>: <span class="ident">ManageConnection</span>,
+{
+    <span class="kw">fn</span> <span class="ident">default</span>() <span class="op">-&gt;</span> <span class="ident">Builder</span><span class="op">&lt;</span><span class="ident">M</span><span class="op">&gt;</span> {
+        <span class="ident">Builder</span> {
+            <span class="ident">max_size</span>: <span class="number">10</span>,
+            <span class="ident">min_idle</span>: <span class="prelude-val">None</span>,
+            <span class="ident">test_on_check_out</span>: <span class="bool-val">true</span>,
+            <span class="ident">idle_timeout</span>: <span class="prelude-val">Some</span>(<span class="ident">Duration</span>::<span class="ident">from_secs</span>(<span class="number">10</span> <span class="op">*</span> <span class="number">60</span>)),
+            <span class="ident">max_lifetime</span>: <span class="prelude-val">Some</span>(<span class="ident">Duration</span>::<span class="ident">from_secs</span>(<span class="number">30</span> <span class="op">*</span> <span class="number">60</span>)),
+            <span class="ident">connection_timeout</span>: <span class="ident">Duration</span>::<span class="ident">from_secs</span>(<span class="number">30</span>),
+            <span class="ident">error_handler</span>: <span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">LoggingErrorHandler</span>),
+            <span class="ident">connection_customizer</span>: <span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">NopConnectionCustomizer</span>),
+            <span class="ident">thread_pool</span>: <span class="prelude-val">None</span>,
+            <span class="ident">reaper_rate</span>: <span class="ident">Duration</span>::<span class="ident">from_secs</span>(<span class="number">30</span>),
+            <span class="ident">_p</span>: <span class="ident">PhantomData</span>,
         }
     }
 }
 
-<span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>C</span>, <span class='ident'>E</span>: <span class='ident'>Error</span><span class='op'>&gt;</span> <span class='ident'>Config</span><span class='op'>&lt;</span><span class='ident'>C</span>, <span class='ident'>E</span><span class='op'>&gt;</span> {
-    <span class='doccomment'>/// Creates a new `Builder` which can be used to construct a customized</span>
-    <span class='doccomment'>/// `Config`.</span>
-    <span class='doccomment'>///</span>
-    <span class='doccomment'>/// All parameters are initialized to their default values.</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>builder</span>() <span class='op'>-&gt;</span> <span class='ident'>Builder</span><span class='op'>&lt;</span><span class='ident'>C</span>, <span class='ident'>E</span><span class='op'>&gt;</span> {
-        <span class='ident'>Builder</span>::<span class='ident'>new</span>()
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">M</span><span class="op">&gt;</span> <span class="ident">Builder</span><span class="op">&lt;</span><span class="ident">M</span><span class="op">&gt;</span>
+<span class="kw">where</span>
+    <span class="ident">M</span>: <span class="ident">ManageConnection</span>,
+{
+    <span class="doccomment">/// Constructs a new `Builder`.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// Parameters are initialized with their default values.</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>() <span class="op">-&gt;</span> <span class="ident">Builder</span><span class="op">&lt;</span><span class="ident">M</span><span class="op">&gt;</span> {
+        <span class="ident">Builder</span>::<span class="ident">default</span>()
     }
 
-    <span class='doccomment'>/// The maximum number of connections managed by the pool.</span>
-    <span class='doccomment'>///</span>
-    <span class='doccomment'>/// Defaults to 10.</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>pool_size</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>u32</span> {
-        <span class='self'>self</span>.<span class='ident'>pool_size</span>
+    <span class="doccomment">/// Sets the maximum number of connections managed by the pool.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// Defaults to 10.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// # Panics</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// Panics if `max_size` is 0.</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">max_size</span>(<span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">max_size</span>: <span class="ident">u32</span>) <span class="op">-&gt;</span> <span class="ident">Builder</span><span class="op">&lt;</span><span class="ident">M</span><span class="op">&gt;</span> {
+        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">max_size</span> <span class="op">&gt;</span> <span class="number">0</span>, <span class="string">&quot;max_size must be positive&quot;</span>);
+        <span class="self">self</span>.<span class="ident">max_size</span> <span class="op">=</span> <span class="ident">max_size</span>;
+        <span class="self">self</span>
     }
 
-    <span class='doccomment'>/// If set, the pool will try to maintain at least this many idle</span>
-    <span class='doccomment'>/// connections at all times, while respecting the value of `pool_size`.</span>
-    <span class='doccomment'>///</span>
-    <span class='doccomment'>/// Defaults to None (equivalent to the value of `pool_size`).</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>min_idle</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>u32</span><span class='op'>&gt;</span> {
-        <span class='self'>self</span>.<span class='ident'>min_idle</span>
+    <span class="doccomment">/// Sets the minimum idle connection count maintained by the pool.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// If set, the pool will try to maintain at least this many idle</span>
+    <span class="doccomment">/// connections at all times, while respecting the value of `max_size`.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// Defaults to `None` (equivalent to the value of `max_size`).</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">min_idle</span>(<span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">min_idle</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">u32</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="ident">Builder</span><span class="op">&lt;</span><span class="ident">M</span><span class="op">&gt;</span> {
+        <span class="self">self</span>.<span class="ident">min_idle</span> <span class="op">=</span> <span class="ident">min_idle</span>;
+        <span class="self">self</span>
     }
 
-    <span class='doccomment'>/// The number of threads that the pool will use for asynchronous</span>
-    <span class='doccomment'>/// operations such as connection creation and health checks.</span>
-    <span class='doccomment'>///</span>
-    <span class='doccomment'>/// Defaults to 3.</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>helper_threads</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>u32</span> {
-        <span class='self'>self</span>.<span class='ident'>helper_threads</span>
+    <span class="doccomment">/// Sets the thread pool used for asynchronous operations such as connection</span>
+    <span class="doccomment">/// creation.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// Defaults to a new pool with 3 threads.</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">thread_pool</span>(<span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">thread_pool</span>: <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">ScheduledThreadPool</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="ident">Builder</span><span class="op">&lt;</span><span class="ident">M</span><span class="op">&gt;</span> {
+        <span class="self">self</span>.<span class="ident">thread_pool</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">thread_pool</span>);
+        <span class="self">self</span>
     }
 
-    <span class='doccomment'>/// If true, the health of a connection will be verified via a call to</span>
-    <span class='doccomment'>/// `ConnectionManager::is_valid` before it is checked out of the pool.</span>
-    <span class='doccomment'>///</span>
-    <span class='doccomment'>/// Defaults to true.</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>test_on_check_out</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>bool</span> {
-        <span class='self'>self</span>.<span class='ident'>test_on_check_out</span>
+    <span class="doccomment">/// If true, the health of a connection will be verified via a call to</span>
+    <span class="doccomment">/// `ConnectionManager::is_valid` before it is checked out of the pool.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// Defaults to true.</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">test_on_check_out</span>(<span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">test_on_check_out</span>: <span class="ident">bool</span>) <span class="op">-&gt;</span> <span class="ident">Builder</span><span class="op">&lt;</span><span class="ident">M</span><span class="op">&gt;</span> {
+        <span class="self">self</span>.<span class="ident">test_on_check_out</span> <span class="op">=</span> <span class="ident">test_on_check_out</span>;
+        <span class="self">self</span>
     }
 
-    <span class='doccomment'>/// If true, `Pool::new` will synchronously initialize its connections,</span>
-    <span class='doccomment'>/// returning an error if they could not be created.</span>
-    <span class='doccomment'>///</span>
-    <span class='doccomment'>/// Defaults to true.</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>initialization_fail_fast</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>bool</span> {
-        <span class='self'>self</span>.<span class='ident'>initialization_fail_fast</span>
+    <span class="doccomment">/// Sets the maximum lifetime of connections in the pool.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// If set, connections will be closed after existing for at most 30 seconds</span>
+    <span class="doccomment">/// beyond this duration.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// If a connection reaches its maximum lifetime while checked out it will</span>
+    <span class="doccomment">/// be closed when it is returned to the pool.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// Defaults to 30 minutes.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// # Panics</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// Panics if `max_lifetime` is the zero `Duration`.</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">max_lifetime</span>(<span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">max_lifetime</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Duration</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="ident">Builder</span><span class="op">&lt;</span><span class="ident">M</span><span class="op">&gt;</span> {
+        <span class="macro">assert</span><span class="macro">!</span>(
+            <span class="ident">max_lifetime</span> <span class="op">!=</span> <span class="prelude-val">Some</span>(<span class="ident">Duration</span>::<span class="ident">from_secs</span>(<span class="number">0</span>)),
+            <span class="string">&quot;max_lifetime must be positive&quot;</span>
+        );
+        <span class="self">self</span>.<span class="ident">max_lifetime</span> <span class="op">=</span> <span class="ident">max_lifetime</span>;
+        <span class="self">self</span>
     }
 
-    <span class='doccomment'>/// If set, connections will be closed after sitting idle for at most 30</span>
-    <span class='doccomment'>/// seconds beyond this duration.</span>
-    <span class='doccomment'>///</span>
-    <span class='doccomment'>/// Defaults to 10 minutes.</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>idle_timeout</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>Duration</span><span class='op'>&gt;</span> {
-        <span class='self'>self</span>.<span class='ident'>idle_timeout</span>
+    <span class="doccomment">/// Sets the idle timeout used by the pool.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// If set, connections will be closed after sitting idle for at most 30</span>
+    <span class="doccomment">/// seconds beyond this duration.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// Defaults to 10 minutes.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// # Panics</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// Panics if `idle_timeout` is the zero `Duration`.</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">idle_timeout</span>(<span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">idle_timeout</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Duration</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="ident">Builder</span><span class="op">&lt;</span><span class="ident">M</span><span class="op">&gt;</span> {
+        <span class="macro">assert</span><span class="macro">!</span>(
+            <span class="ident">idle_timeout</span> <span class="op">!=</span> <span class="prelude-val">Some</span>(<span class="ident">Duration</span>::<span class="ident">from_secs</span>(<span class="number">0</span>)),
+            <span class="string">&quot;idle_timeout must be positive&quot;</span>
+        );
+        <span class="self">self</span>.<span class="ident">idle_timeout</span> <span class="op">=</span> <span class="ident">idle_timeout</span>;
+        <span class="self">self</span>
     }
 
-    <span class='doccomment'>/// If set, connections will be closed after existing for at most 30 seconds</span>
-    <span class='doccomment'>/// beyond this duration. If a connection reaches its maximum lifetime while</span>
-    <span class='doccomment'>/// checked out it will be closed when it is returned to the pool.</span>
-    <span class='doccomment'>///</span>
-    <span class='doccomment'>/// Defaults to 30 minutes.</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>max_lifetime</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>Duration</span><span class='op'>&gt;</span> {
-        <span class='self'>self</span>.<span class='ident'>max_lifetime</span>
+    <span class="doccomment">/// Sets the connection timeout used by the pool.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// Calls to `Pool::get` will wait this long for a connection to become</span>
+    <span class="doccomment">/// available before returning an error.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// Defaults to 30 seconds.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// # Panics</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// Panics if `connection_timeout` is the zero duration</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">connection_timeout</span>(<span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">connection_timeout</span>: <span class="ident">Duration</span>) <span class="op">-&gt;</span> <span class="ident">Builder</span><span class="op">&lt;</span><span class="ident">M</span><span class="op">&gt;</span> {
+        <span class="macro">assert</span><span class="macro">!</span>(
+            <span class="ident">connection_timeout</span> <span class="op">&gt;</span> <span class="ident">Duration</span>::<span class="ident">from_secs</span>(<span class="number">0</span>),
+            <span class="string">&quot;connection_timeout must be positive&quot;</span>
+        );
+        <span class="self">self</span>.<span class="ident">connection_timeout</span> <span class="op">=</span> <span class="ident">connection_timeout</span>;
+        <span class="self">self</span>
     }
 
-    <span class='doccomment'>/// Calls to `Pool::get` will wait this long for a connection to become</span>
-    <span class='doccomment'>/// available before returning an error.</span>
-    <span class='doccomment'>///</span>
-    <span class='doccomment'>/// Defaults to 30 seconds.</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>connection_timeout</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>Duration</span> {
-        <span class='self'>self</span>.<span class='ident'>connection_timeout</span>
+    <span class="doccomment">/// Sets the handler for errors reported in the pool.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// Defaults to the `LoggingErrorHandler`.</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">error_handler</span>(<span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">error_handler</span>: <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">HandleError</span><span class="op">&lt;</span><span class="ident">M</span>::<span class="ident">Error</span><span class="op">&gt;&gt;</span>) <span class="op">-&gt;</span> <span class="ident">Builder</span><span class="op">&lt;</span><span class="ident">M</span><span class="op">&gt;</span> {
+        <span class="self">self</span>.<span class="ident">error_handler</span> <span class="op">=</span> <span class="ident">error_handler</span>;
+        <span class="self">self</span>
     }
 
-    <span class='doccomment'>/// The handler for error reported in the pool.</span>
-    <span class='doccomment'>///</span>
-    <span class='doccomment'>/// Defaults to `r2d2::LoggingErrorHandler`.</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>error_handler</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='kw-2'>&amp;</span><span class='ident'>HandleError</span><span class='op'>&lt;</span><span class='ident'>E</span><span class='op'>&gt;</span> {
-        <span class='kw-2'>&amp;</span><span class='op'>*</span><span class='self'>self</span>.<span class='ident'>error_handler</span>
+    <span class="doccomment">/// Sets the connection customizer used by the pool.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// Defaults to the `NopConnectionCustomizer`.</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">connection_customizer</span>(
+        <span class="kw-2">mut</span> <span class="self">self</span>,
+        <span class="ident">connection_customizer</span>: <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">CustomizeConnection</span><span class="op">&lt;</span><span class="ident">M</span>::<span class="ident">Connection</span>, <span class="ident">M</span>::<span class="ident">Error</span><span class="op">&gt;&gt;</span>,
+    ) <span class="op">-&gt;</span> <span class="ident">Builder</span><span class="op">&lt;</span><span class="ident">M</span><span class="op">&gt;</span> {
+        <span class="self">self</span>.<span class="ident">connection_customizer</span> <span class="op">=</span> <span class="ident">connection_customizer</span>;
+        <span class="self">self</span>
     }
 
-    <span class='doccomment'>/// The connection customizer used by the pool.</span>
-    <span class='doccomment'>///</span>
-    <span class='doccomment'>/// Defaults to `r2d2::NopConnectionCustomizer`.</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>connection_customizer</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='kw-2'>&amp;</span><span class='ident'>CustomizeConnection</span><span class='op'>&lt;</span><span class='ident'>C</span>, <span class='ident'>E</span><span class='op'>&gt;</span> {
-        <span class='kw-2'>&amp;</span><span class='op'>*</span><span class='self'>self</span>.<span class='ident'>connection_customizer</span>
+    <span class="comment">// used by tests</span>
+    <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">dead_code</span>)]</span>
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">reaper_rate</span>(<span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">reaper_rate</span>: <span class="ident">Duration</span>) <span class="op">-&gt;</span> <span class="ident">Builder</span><span class="op">&lt;</span><span class="ident">M</span><span class="op">&gt;</span> {
+        <span class="self">self</span>.<span class="ident">reaper_rate</span> <span class="op">=</span> <span class="ident">reaper_rate</span>;
+        <span class="self">self</span>
+    }
+
+    <span class="doccomment">/// Consumes the builder, returning a new, initialized pool.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// It will block until the pool has established its configured minimum</span>
+    <span class="doccomment">/// number of connections, or it times out.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// # Errors</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// Returns an error if the pool is unable to open its minimum number of</span>
+    <span class="doccomment">/// connections.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// # Panics</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// Panics if `min_idle` is greater than `max_size`.</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">build</span>(<span class="self">self</span>, <span class="ident">manager</span>: <span class="ident">M</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Pool</span><span class="op">&lt;</span><span class="ident">M</span><span class="op">&gt;</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
+        <span class="kw">let</span> <span class="ident">pool</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">build_unchecked</span>(<span class="ident">manager</span>);
+        <span class="ident">pool</span>.<span class="ident">wait_for_initialization</span>()<span class="question-mark">?</span>;
+        <span class="prelude-val">Ok</span>(<span class="ident">pool</span>)
+    }
+
+    <span class="doccomment">/// Consumes the builder, returning a new pool.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// Unlike `build`, this method does not wait for any connections to be</span>
+    <span class="doccomment">/// established before returning.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// # Panics</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// Panics if `min_idle` is greater than `max_size`.</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">build_unchecked</span>(<span class="self">self</span>, <span class="ident">manager</span>: <span class="ident">M</span>) <span class="op">-&gt;</span> <span class="ident">Pool</span><span class="op">&lt;</span><span class="ident">M</span><span class="op">&gt;</span> {
+        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">min_idle</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">min_idle</span> {
+            <span class="macro">assert</span><span class="macro">!</span>(
+                <span class="self">self</span>.<span class="ident">max_size</span> <span class="op">&gt;=</span> <span class="ident">min_idle</span>,
+                <span class="string">&quot;min_idle must be no larger than max_size&quot;</span>
+            );
+        }
+
+        <span class="kw">let</span> <span class="ident">thread_pool</span> <span class="op">=</span> <span class="kw">match</span> <span class="self">self</span>.<span class="ident">thread_pool</span> {
+            <span class="prelude-val">Some</span>(<span class="ident">thread_pool</span>) <span class="op">=&gt;</span> <span class="ident">thread_pool</span>,
+            <span class="prelude-val">None</span> <span class="op">=&gt;</span> <span class="ident">Arc</span>::<span class="ident">new</span>(<span class="ident">ScheduledThreadPool</span>::<span class="ident">with_name</span>(<span class="string">&quot;r2d2-worker-{}&quot;</span>, <span class="number">3</span>)),
+        };
+
+        <span class="kw">let</span> <span class="ident">config</span> <span class="op">=</span> <span class="ident">Config</span> {
+            <span class="ident">max_size</span>: <span class="self">self</span>.<span class="ident">max_size</span>,
+            <span class="ident">min_idle</span>: <span class="self">self</span>.<span class="ident">min_idle</span>,
+            <span class="ident">test_on_check_out</span>: <span class="self">self</span>.<span class="ident">test_on_check_out</span>,
+            <span class="ident">max_lifetime</span>: <span class="self">self</span>.<span class="ident">max_lifetime</span>,
+            <span class="ident">idle_timeout</span>: <span class="self">self</span>.<span class="ident">idle_timeout</span>,
+            <span class="ident">connection_timeout</span>: <span class="self">self</span>.<span class="ident">connection_timeout</span>,
+            <span class="ident">error_handler</span>: <span class="self">self</span>.<span class="ident">error_handler</span>,
+            <span class="ident">connection_customizer</span>: <span class="self">self</span>.<span class="ident">connection_customizer</span>,
+            <span class="ident">thread_pool</span>: <span class="ident">thread_pool</span>,
+        };
+
+        <span class="ident">Pool</span>::<span class="ident">new_inner</span>(<span class="ident">config</span>, <span class="ident">manager</span>, <span class="self">self</span>.<span class="ident">reaper_rate</span>)
     }
 }
 
-<span class='attribute'>#[<span class='ident'>cfg</span>(<span class='ident'>test</span>)]</span>
-<span class='kw'>mod</span> <span class='ident'>test</span> {
-    <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>time</span>::<span class='ident'>Duration</span>;
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Config</span><span class="op">&lt;</span><span class="ident">C</span>, <span class="ident">E</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="ident">max_size</span>: <span class="ident">u32</span>,
+    <span class="kw">pub</span> <span class="ident">min_idle</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">u32</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">test_on_check_out</span>: <span class="ident">bool</span>,
+    <span class="kw">pub</span> <span class="ident">max_lifetime</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Duration</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">idle_timeout</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Duration</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">connection_timeout</span>: <span class="ident">Duration</span>,
+    <span class="kw">pub</span> <span class="ident">error_handler</span>: <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">HandleError</span><span class="op">&lt;</span><span class="ident">E</span><span class="op">&gt;&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">connection_customizer</span>: <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">CustomizeConnection</span><span class="op">&lt;</span><span class="ident">C</span>, <span class="ident">E</span><span class="op">&gt;&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">thread_pool</span>: <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">ScheduledThreadPool</span><span class="op">&gt;</span>,
+}
 
-    <span class='kw'>use</span> <span class='kw'>super</span>::<span class='op'>*</span>;
-    <span class='kw'>use</span> <span class='ident'>test</span>::<span class='ident'>Error</span>;
-
-    <span class='attribute'>#[<span class='ident'>test</span>]</span>
-    <span class='kw'>fn</span> <span class='ident'>builder</span>() {
-        <span class='kw'>let</span> <span class='ident'>config</span> <span class='op'>=</span> <span class='ident'>Config</span>::<span class='op'>&lt;</span>(), <span class='ident'>Error</span><span class='op'>&gt;</span>::<span class='ident'>builder</span>()
-                         .<span class='ident'>pool_size</span>(<span class='number'>1</span>)
-                         .<span class='ident'>helper_threads</span>(<span class='number'>2</span>)
-                         .<span class='ident'>test_on_check_out</span>(<span class='bool-val'>false</span>)
-                         .<span class='ident'>initialization_fail_fast</span>(<span class='bool-val'>false</span>)
-                         .<span class='ident'>connection_timeout</span>(<span class='ident'>Duration</span>::<span class='ident'>from_secs</span>(<span class='number'>3</span>))
-                         .<span class='ident'>build</span>();
-        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='number'>1</span>, <span class='ident'>config</span>.<span class='ident'>pool_size</span>());
-        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='number'>2</span>, <span class='ident'>config</span>.<span class='ident'>helper_threads</span>());
-        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='bool-val'>false</span>, <span class='ident'>config</span>.<span class='ident'>test_on_check_out</span>());
-        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='bool-val'>false</span>, <span class='ident'>config</span>.<span class='ident'>initialization_fail_fast</span>());
-        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>Duration</span>::<span class='ident'>from_secs</span>(<span class='number'>3</span>), <span class='ident'>config</span>.<span class='ident'>connection_timeout</span>());
-    }
-
-    <span class='attribute'>#[<span class='ident'>test</span>]</span>
-    <span class='attribute'>#[<span class='ident'>should_panic</span>(<span class='ident'>expected</span> <span class='op'>=</span> <span class='string'>&quot;pool_size must be positive&quot;</span>)]</span>
-    <span class='kw'>fn</span> <span class='ident'>builder_zero_pool_size</span>() {
-        <span class='ident'>Config</span>::<span class='op'>&lt;</span>(), <span class='ident'>Error</span><span class='op'>&gt;</span>::<span class='ident'>builder</span>().<span class='ident'>pool_size</span>(<span class='number'>0</span>);
-    }
-
-    <span class='attribute'>#[<span class='ident'>test</span>]</span>
-    <span class='attribute'>#[<span class='ident'>should_panic</span>(<span class='ident'>expected</span> <span class='op'>=</span> <span class='string'>&quot;helper_threads must be positive&quot;</span>)]</span>
-    <span class='kw'>fn</span> <span class='ident'>builder_zero_helper_threads</span>() {
-        <span class='ident'>Config</span>::<span class='op'>&lt;</span>(), <span class='ident'>Error</span><span class='op'>&gt;</span>::<span class='ident'>builder</span>().<span class='ident'>helper_threads</span>(<span class='number'>0</span>);
-    }
-
-    <span class='attribute'>#[<span class='ident'>test</span>]</span>
-    <span class='attribute'>#[<span class='ident'>should_panic</span>(<span class='ident'>expected</span> <span class='op'>=</span> <span class='string'>&quot;connection_timeout must be positive&quot;</span>)]</span>
-    <span class='kw'>fn</span> <span class='ident'>builder_zero_connection_timeout</span>() {
-        <span class='ident'>Config</span>::<span class='op'>&lt;</span>(), <span class='ident'>Error</span><span class='op'>&gt;</span>::<span class='ident'>builder</span>().<span class='ident'>connection_timeout</span>(<span class='ident'>Duration</span>::<span class='ident'>from_secs</span>(<span class='number'>0</span>));
-    }
-
-    <span class='attribute'>#[<span class='ident'>test</span>]</span>
-    <span class='attribute'>#[<span class='ident'>should_panic</span>(<span class='ident'>expected</span> <span class='op'>=</span> <span class='string'>&quot;idle_timeout must be positive&quot;</span>)]</span>
-    <span class='kw'>fn</span> <span class='ident'>builder_zero_idle_timeout</span>() {
-        <span class='ident'>Config</span>::<span class='op'>&lt;</span>(), <span class='ident'>Error</span><span class='op'>&gt;</span>::<span class='ident'>builder</span>().<span class='ident'>idle_timeout</span>(<span class='prelude-val'>Some</span>(<span class='ident'>Duration</span>::<span class='ident'>from_secs</span>(<span class='number'>0</span>)));
-    }
-
-    <span class='attribute'>#[<span class='ident'>test</span>]</span>
-    <span class='attribute'>#[<span class='ident'>should_panic</span>(<span class='ident'>expected</span> <span class='op'>=</span> <span class='string'>&quot;max_lifetime must be positive&quot;</span>)]</span>
-    <span class='kw'>fn</span> <span class='ident'>builder_zero_max_lifetime</span>() {
-        <span class='ident'>Config</span>::<span class='op'>&lt;</span>(), <span class='ident'>Error</span><span class='op'>&gt;</span>::<span class='ident'>builder</span>().<span class='ident'>max_lifetime</span>(<span class='prelude-val'>Some</span>(<span class='ident'>Duration</span>::<span class='ident'>from_secs</span>(<span class='number'>0</span>)));
-    }
-
-    <span class='attribute'>#[<span class='ident'>test</span>]</span>
-    <span class='attribute'>#[<span class='ident'>should_panic</span>(<span class='ident'>expected</span> <span class='op'>=</span> <span class='string'>&quot;min_idle must be no larger than pool_size&quot;</span>)]</span>
-    <span class='kw'>fn</span> <span class='ident'>builder_too_many_num_idle</span>() {
-        <span class='ident'>Config</span>::<span class='op'>&lt;</span>(), <span class='ident'>Error</span><span class='op'>&gt;</span>::<span class='ident'>builder</span>().<span class='ident'>pool_size</span>(<span class='number'>1</span>).<span class='ident'>min_idle</span>(<span class='prelude-val'>Some</span>(<span class='number'>2</span>)).<span class='ident'>build</span>();
+<span class="comment">// manual to avoid bounds on C and E</span>
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">C</span>, <span class="ident">E</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="ident">Debug</span> <span class="kw">for</span> <span class="ident">Config</span><span class="op">&lt;</span><span class="ident">C</span>, <span class="ident">E</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">fmt</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span>) <span class="op">-&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
+        <span class="ident">fmt</span>.<span class="ident">debug_struct</span>(<span class="string">&quot;Config&quot;</span>)
+            .<span class="ident">field</span>(<span class="string">&quot;max_size&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">max_size</span>)
+            .<span class="ident">field</span>(<span class="string">&quot;min_idle&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">min_idle</span>)
+            .<span class="ident">field</span>(<span class="string">&quot;test_on_check_out&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">test_on_check_out</span>)
+            .<span class="ident">field</span>(<span class="string">&quot;max_lifetime&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">max_lifetime</span>)
+            .<span class="ident">field</span>(<span class="string">&quot;idle_timeout&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">idle_timeout</span>)
+            .<span class="ident">field</span>(<span class="string">&quot;connection_timeout&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">connection_timeout</span>)
+            .<span class="ident">field</span>(<span class="string">&quot;error_handler&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">error_handler</span>)
+            .<span class="ident">field</span>(<span class="string">&quot;connection_customizer&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">connection_customizer</span>)
+            .<span class="ident">finish</span>()
     }
 }
 </pre>
-</section>
-    <section id='search' class="content hidden"></section>
-
-    <section class="footer"></section>
-
-    <aside id="help" class="hidden">
-        <div>
-            <h1 class="hidden">Help</h1>
-
-            <div class="shortcuts">
-                <h2>Keyboard Shortcuts</h2>
-
-                <dl>
-                    <dt>?</dt>
-                    <dd>Show this help dialog</dd>
-                    <dt>S</dt>
-                    <dd>Focus the search field</dd>
-                    <dt>&larrb;</dt>
-                    <dd>Move up in search results</dd>
-                    <dt>&rarrb;</dt>
-                    <dd>Move down in search results</dd>
-                    <dt>&#9166;</dt>
-                    <dd>Go to active search result</dd>
-                    <dt>+</dt>
-                    <dd>Collapse/expand all sections</dd>
-                </dl>
-            </div>
-
-            <div class="infos">
-                <h2>Search Tricks</h2>
-
-                <p>
-                    Prefix searches with a type followed by a colon (e.g.
-                    <code>fn:</code>) to restrict the search to a given type.
-                </p>
-
-                <p>
-                    Accepted types are: <code>fn</code>, <code>mod</code>,
-                    <code>struct</code>, <code>enum</code>,
-                    <code>trait</code>, <code>type</code>, <code>macro</code>,
-                    and <code>const</code>.
-                </p>
-
-                <p>
-                    Search functions by type signature (e.g.
-                    <code>vec -> usize</code> or <code>* -> vec</code>)
-                </p>
-            </div>
-        </div>
-    </aside>
-
-    
-
-    <script>
-        window.rootPath = "../../";
-        window.currentCrate = "r2d2";
-    </script>
-    <script src="../../jquery.js"></script>
-    <script src="../../main.js"></script>
-    <script defer src="../../search-index.js"></script>
-</body>
-</html>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><aside id="help" class="hidden"><div><h1 class="hidden">Help</h1><div class="shortcuts"><h2>Keyboard Shortcuts</h2><dl><dt><kbd>?</kbd></dt><dd>Show this help dialog</dd><dt><kbd>S</kbd></dt><dd>Focus the search field</dd><dt><kbd>↑</kbd></dt><dd>Move up in search results</dd><dt><kbd>↓</kbd></dt><dd>Move down in search results</dd><dt><kbd>↹</kbd></dt><dd>Switch tab</dd><dt><kbd>&#9166;</kbd></dt><dd>Go to active search result</dd><dt><kbd>+</kbd></dt><dd>Expand all sections</dd><dt><kbd>-</kbd></dt><dd>Collapse all sections</dd></dl></div><div class="infos"><h2>Search Tricks</h2><p>Prefix searches with a type followed by a colon (e.g. <code>fn:</code>) to restrict the search to a given type.</p><p>Accepted types are: <code>fn</code>, <code>mod</code>, <code>struct</code>, <code>enum</code>, <code>trait</code>, <code>type</code>, <code>macro</code>, and <code>const</code>.</p><p>Search functions by type signature (e.g. <code>vec -> usize</code> or <code>* -> vec</code>)</p><p>Search multiple things at once by splitting your query with comma (e.g. <code>str,u8</code> or <code>String,struct:Vec,test</code>)</p></div></div></aside><script>window.rootPath = "../../";window.currentCrate = "r2d2";</script><script src="../../aliases.js"></script><script src="../../main.js"></script><script defer src="../../search-index.js"></script></body></html>
