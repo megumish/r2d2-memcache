@@ -11,8 +11,11 @@ use r2d2_memcache::MemcacheConnectionManager;
 #[test]
 fn test_basic() {
     let manager = MemcacheConnectionManager::new("memcache://localhost:11211");
-    let config = r2d2::Config::builder().pool_size(2).build();
-    let pool = Arc::new(r2d2::Pool::new(config, manager).unwrap());
+    let pool = Arc::new(r2d2::Pool::builder()
+        .max_size(15)
+        .build(manager)
+        .unwrap());
+
 
     let (s1, r1) = mpsc::channel();
     let (s2, r2) = mpsc::channel();
@@ -42,11 +45,11 @@ fn test_basic() {
 #[test]
 fn test_is_valid() {
     let manager = MemcacheConnectionManager::new("memcache://localhost:11211");
-    let config = r2d2::Config::builder()
-        .pool_size(1)
+    let pool = r2d2::Pool::builder()
+        .max_size(1)
         .test_on_check_out(true)
-        .build();
-    let pool = r2d2::Pool::new(config, manager).unwrap();
+        .build(manager)
+        .unwrap();
 
     pool.get().unwrap();
 }
