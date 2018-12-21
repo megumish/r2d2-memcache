@@ -6,18 +6,20 @@ use r2d2_memcache::MemcacheConnectionManager;
 
 #[test]
 fn connect() {
-    let config = r2d2::Config::default();
     let manager = MemcacheConnectionManager::new("memcache://localhost:11211");
-
-    let pool = r2d2::Pool::new(config, manager).unwrap();
+    r2d2::Pool::builder()
+        .max_size(15)
+        .build(manager)
+        .unwrap();
 }
 
 #[test]
 fn flush() {
-    let config = r2d2::Config::default();
     let manager = MemcacheConnectionManager::new("memcache://localhost:11211");
-
-    let pool = r2d2::Pool::new(config, manager).unwrap();
+    let pool = r2d2::Pool::builder()
+        .max_size(15)
+        .build(manager)
+        .unwrap();
 
     {
         let pool = pool.clone();
@@ -28,10 +30,11 @@ fn flush() {
 
 #[test]
 fn version() {
-    let config = r2d2::Config::default();
     let manager = MemcacheConnectionManager::new("memcache://localhost:11211");
-
-    let pool = r2d2::Pool::new(config, manager).unwrap();
+    let pool = r2d2::Pool::builder()
+        .max_size(15)
+        .build(manager)
+        .unwrap();
 
     {
         let pool = pool.clone();
@@ -42,10 +45,11 @@ fn version() {
 
 #[test]
 fn store() {
-    let config = r2d2::Config::default();
     let manager = MemcacheConnectionManager::new("memcache://localhost:11211");
-
-    let pool = r2d2::Pool::new(config, manager).unwrap();
+    let pool = r2d2::Pool::builder()
+        .max_size(15)
+        .build(manager)
+        .unwrap();
 
     {
         let pool = pool.clone();
@@ -62,10 +66,12 @@ fn store() {
 
 #[test]
 fn get() {
-    let config = r2d2::Config::default();
     let manager = MemcacheConnectionManager::new("memcache://localhost:11211");
+    let pool = r2d2::Pool::builder()
+        .max_size(15)
+        .build(manager)
+        .unwrap();
 
-    let pool = r2d2::Pool::new(config, manager).unwrap();
     {
         let pool = pool.clone();
         let mut conn = pool.get().unwrap();
@@ -79,10 +85,12 @@ fn get() {
 
 #[test]
 fn delete() {
-    let config = r2d2::Config::default();
     let manager = MemcacheConnectionManager::new("memcache://localhost:11211");
+    let pool = r2d2::Pool::builder()
+        .max_size(15)
+        .build(manager)
+        .unwrap();
 
-    let pool = r2d2::Pool::new(config, manager).unwrap();
     {
         let pool = pool.clone();
         let mut conn = pool.get().unwrap();
@@ -92,10 +100,12 @@ fn delete() {
 
 #[test]
 fn increment() {
-    let config = r2d2::Config::default();
     let manager = MemcacheConnectionManager::new("memcache://localhost:11211");
+    let pool = r2d2::Pool::builder()
+        .max_size(15)
+        .build(manager)
+        .unwrap();
 
-    let pool = r2d2::Pool::new(config, manager).unwrap();
     {
         let pool = pool.clone();
         let mut conn = pool.get().unwrap();
@@ -108,10 +118,12 @@ fn increment() {
 
 #[test]
 fn decrement() {
-    let config = r2d2::Config::default();
     let manager = MemcacheConnectionManager::new("memcache://localhost:11211");
 
-    let pool = r2d2::Pool::new(config, manager).unwrap();
+    let pool = r2d2::Pool::builder()
+        .max_size(15)
+        .build(manager)
+        .unwrap();
     {
         let pool = pool.clone();
         let mut conn = pool.get().unwrap();

@@ -7,15 +7,11 @@ use std::thread;
 
 #[test]
 fn get_thousand_data_parallel() {
-    let config = r2d2::Config::default();
     let manager = MemcacheConnectionManager::new("memcache://localhost:11211");
-
-    let pool = r2d2::Pool::new(config, manager).unwrap();
-    {
-        let pool = pool.clone();
-        let mut conn = pool.get().unwrap();
-        conn.flush().unwrap();
-    }
+    let pool = r2d2::Pool::builder()
+        .max_size(15)
+        .build(manager)
+        .unwrap();
 
     pool.get().unwrap().flush().unwrap();
 
