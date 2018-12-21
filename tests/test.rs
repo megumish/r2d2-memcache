@@ -2,8 +2,8 @@ extern crate memcache;
 extern crate r2d2;
 extern crate r2d2_memcache;
 
-use std::sync::Arc;
 use std::sync::mpsc;
+use std::sync::Arc;
 use std::thread;
 
 use r2d2_memcache::MemcacheConnectionManager;
@@ -11,11 +11,7 @@ use r2d2_memcache::MemcacheConnectionManager;
 #[test]
 fn test_basic() {
     let manager = MemcacheConnectionManager::new("memcache://localhost:11211");
-    let pool = Arc::new(r2d2::Pool::builder()
-        .max_size(15)
-        .build(manager)
-        .unwrap());
-
+    let pool = Arc::new(r2d2::Pool::builder().max_size(15).build(manager).unwrap());
 
     let (s1, r1) = mpsc::channel();
     let (s2, r2) = mpsc::channel();

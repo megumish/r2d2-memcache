@@ -1,6 +1,6 @@
-pub extern crate r2d2;
 pub extern crate memcache;
-pub mod error;
+pub extern crate r2d2;
 pub mod connection_manager;
+pub mod error;
 
 pub use connection_manager::MemcacheConnectionManager;
