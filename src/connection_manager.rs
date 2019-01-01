@@ -25,7 +25,7 @@ impl r2d2::ManageConnection for MemcacheConnectionManager<'static> {
     type Error = Error;
 
     fn connect(&self) -> Result<memcache::Client, Error> {
-        memcache::Client::new(self.urls.clone()).map_err(Error::Other)
+        memcache::Client::connect(self.urls.clone()).map_err(Error::Other)
     }
 
     fn is_valid(&self, connection: &mut memcache::Client) -> Result<(), Error> {
