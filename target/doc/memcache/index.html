@@ -18,7 +18,7 @@ memcache = &quot;*&quot;
 <h1 id="basic-usage" class="section-header"><a href="#basic-usage">Basic usage:</a></h1>
 <pre class="rust rust-example-rendered">
 <span class="comment">// create connection with to memcached server node:</span>
-<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">client</span> <span class="op">=</span> <span class="ident">memcache</span>::<span class="ident">Client</span>::<span class="ident">new</span>(<span class="string">&quot;memcache://127.0.0.1:12345?timeout=10&amp;tcp_nodelay=true&quot;</span>).<span class="ident">unwrap</span>();
+<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">client</span> <span class="op">=</span> <span class="ident">memcache</span>::<span class="ident">Client</span>::<span class="ident">connect</span>(<span class="string">&quot;memcache://127.0.0.1:12345?timeout=10&amp;tcp_nodelay=true&quot;</span>).<span class="ident">unwrap</span>();
 
 <span class="comment">// flush the database:</span>
 <span class="ident">client</span>.<span class="ident">flush</span>().<span class="ident">unwrap</span>();
