@@ -10,3 +10,6 @@ services:
 matrix:
  allow_failures:
    - rust: nightly
+
+notifications:
+  email: false

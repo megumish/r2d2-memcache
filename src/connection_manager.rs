@@ -4,23 +4,23 @@ extern crate r2d2;
 use error::Error;
 
 #[derive(Debug)]
-pub struct MemcacheConnectionManager<'a> {
-    urls: Vec<&'a str>,
+pub struct MemcacheConnectionManager {
+    urls: Vec<String>,
 }
 
-impl<'a> MemcacheConnectionManager<'a> {
+impl MemcacheConnectionManager {
     /// Creates a new `MemcacheConnectionManager`.
     ///
     /// See `memcache::Connection::connect` for a description of the parameter
     /// types.
-    pub fn new<C: memcache::Connectable<'a>>(target: C) -> MemcacheConnectionManager<'a> {
+    pub fn new<C: memcache::Connectable>(target: C) -> MemcacheConnectionManager {
         MemcacheConnectionManager {
             urls: target.get_urls(),
         }
     }
 }
 
-impl r2d2::ManageConnection for MemcacheConnectionManager<'static> {
+impl r2d2::ManageConnection for MemcacheConnectionManager {
     type Connection = memcache::Client;
     type Error = Error;
 
