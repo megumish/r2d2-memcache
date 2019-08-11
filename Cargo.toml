@@ -1,6 +1,6 @@
 [package]
 name = "r2d2-memcache"
-version = "0.3.0"
+version = "0.3.1"
 authors = ["Keishi Kawada <Kk-shli@outlook.jp>", "An Long <aisk1988@gmail.com>"]
 license = "MIT"
 readme = "README.md"
@@ -10,4 +10,4 @@ keywords = ["memcached", "memcache", "pool", "nosql", "database"]
 
 [dependencies]
 r2d2 = "0.8"
-memcache = "0.12.3"
+memcache = "0.13.1"
