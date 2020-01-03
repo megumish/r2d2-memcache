@@ -9,7 +9,7 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-r2d2-memcache = "0.2.0"
+r2d2-memcache = "0.6.0"
 ```
 
 ## Basic Usage
