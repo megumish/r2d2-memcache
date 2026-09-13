@@ -1,7 +1,3 @@
-extern crate memcache;
-extern crate r2d2;
-extern crate r2d2_memcache;
-
 use r2d2_memcache::MemcacheConnectionManager;
 use std::thread;
 
@@ -16,7 +12,7 @@ fn get_thousand_data_parallel() {
     for i in 0..1000 {
         let pool = pool.clone();
         let t = thread::spawn(move || {
-            let mut conn = pool.get().unwrap();
+            let conn = pool.get().unwrap();
             let value = format! {"{}{}","bar_thousand_",i};
             conn.set(&format!("{}{}", "foo_thousand_", i), value, 0)
                 .unwrap();
@@ -32,7 +28,7 @@ fn get_thousand_data_parallel() {
         let pool = pool.clone();
         let t = thread::spawn(move || {
             let value = format! {"{}{}","bar_thousand_",i};
-            let mut conn = pool.get().unwrap();
+            let conn = pool.get().unwrap();
             let result: String = conn
                 .get(&format!("{}{}", "foo_thousand_", i))
                 .unwrap()
