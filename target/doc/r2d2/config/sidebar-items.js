@@ -1,1 +1,0 @@
-initSidebarItems({"struct":[["Builder","A builder for `Config`."],["Config","A struct specifying the runtime configuration of a pool."]]});
