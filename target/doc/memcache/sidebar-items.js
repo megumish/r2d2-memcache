@@ -1,1 +1,0 @@
-initSidebarItems({"enum":[["MemcacheError","Stands for errors raised from rust-memcache"]],"struct":[["Client",""]],"trait":[["Connectable",""],["FromMemcacheValue","determine how the value is unserialize to memcache"],["ToMemcacheValue","determine how the value is serialize to memcache"]]});
