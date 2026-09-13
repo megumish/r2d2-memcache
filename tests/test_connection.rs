@@ -1,7 +1,3 @@
-extern crate memcache;
-extern crate r2d2;
-extern crate r2d2_memcache;
-
 use r2d2_memcache::MemcacheConnectionManager;
 
 #[test]
@@ -15,7 +11,7 @@ fn flush() {
     let manager = MemcacheConnectionManager::new("memcache://localhost:11211");
     let pool = r2d2::Pool::builder().max_size(15).build(manager).unwrap();
 
-    let mut conn = pool.get().unwrap();
+    let conn = pool.get().unwrap();
     conn.flush().unwrap();
 }
 
@@ -24,7 +20,7 @@ fn version() {
     let manager = MemcacheConnectionManager::new("memcache://localhost:11211");
     let pool = r2d2::Pool::builder().max_size(15).build(manager).unwrap();
 
-    let mut conn = pool.get().unwrap();
+    let conn = pool.get().unwrap();
     conn.version().unwrap();
 }
 
@@ -33,7 +29,7 @@ fn store() {
     let manager = MemcacheConnectionManager::new("memcache://localhost:11211");
     let pool = r2d2::Pool::builder().max_size(15).build(manager).unwrap();
 
-    let mut conn = pool.get().unwrap();
+    let conn = pool.get().unwrap();
     conn.flush().unwrap();
     let value = "bar";
     conn.add("foo", value, 10).unwrap();
@@ -48,7 +44,7 @@ fn get() {
     let manager = MemcacheConnectionManager::new("memcache://localhost:11211");
     let pool = r2d2::Pool::builder().max_size(15).build(manager).unwrap();
 
-    let mut conn = pool.get().unwrap();
+    let conn = pool.get().unwrap();
     conn.flush().unwrap();
     let value = "bar";
     conn.set("foo_get", value, 10).unwrap();
@@ -61,7 +57,7 @@ fn delete() {
     let manager = MemcacheConnectionManager::new("memcache://localhost:11211");
     let pool = r2d2::Pool::builder().max_size(15).build(manager).unwrap();
 
-    let mut conn = pool.get().unwrap();
+    let conn = pool.get().unwrap();
     conn.delete("foo").unwrap();
 }
 
@@ -70,7 +66,7 @@ fn increment() {
     let manager = MemcacheConnectionManager::new("memcache://localhost:11211");
     let pool = r2d2::Pool::builder().max_size(15).build(manager).unwrap();
 
-    let mut conn = pool.get().unwrap();
+    let conn = pool.get().unwrap();
     conn.flush().unwrap();
     let value = 100;
     conn.set("foo_increment", value, 0).unwrap();
@@ -82,7 +78,7 @@ fn decrement() {
     let manager = MemcacheConnectionManager::new("memcache://localhost:11211");
 
     let pool = r2d2::Pool::builder().max_size(15).build(manager).unwrap();
-    let mut conn = pool.get().unwrap();
+    let conn = pool.get().unwrap();
     conn.flush().unwrap();
     let value = 100;
     conn.set("foo_decrement", value, 0).unwrap();

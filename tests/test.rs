@@ -1,7 +1,3 @@
-extern crate memcache;
-extern crate r2d2;
-extern crate r2d2_memcache;
-
 use std::sync::mpsc;
 use std::sync::Arc;
 use std::thread;

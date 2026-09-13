@@ -1,10 +1,7 @@
-extern crate memcache;
-
 use std::error;
-use std::error::Error as _StdError;
 use std::fmt;
 
-/// A unified enum of errors by memcache::Connection
+/// A unified enum of errors by memcache::Client
 #[derive(Debug)]
 pub enum Error {
     /// A memcache::MemcacheError
@@ -13,23 +10,22 @@ pub enum Error {
 
 impl fmt::Display for Error {
     fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
-        match self.cause() {
-            Some(cause) => write!(fmt, "{}: {}", self.description(), cause),
-            None => write!(fmt, "{}", self.description()),
+        match *self {
+            Error::Other(ref err) => write!(fmt, "{}", err),
         }
     }
 }
 
 impl error::Error for Error {
-    fn description(&self) -> &str {
+    fn source(&self) -> Option<&(dyn error::Error + 'static)> {
         match *self {
-            Error::Other(ref err) => err.description(),
+            Error::Other(ref err) => Some(err),
         }
     }
+}
 
-    fn cause(&self) -> Option<&error::Error> {
-        match *self {
-            Error::Other(ref err) => err.cause(),
-        }
+impl From<memcache::MemcacheError> for Error {
+    fn from(err: memcache::MemcacheError) -> Error {
+        Error::Other(err)
     }
 }

@@ -3,25 +3,27 @@
 [![Latest Version](https://img.shields.io/crates/v/r2d2-memcache.svg)](https://crates.io/crates/r2d2-memcache)
 [![Docs](https://docs.rs/r2d2-memcache/badge.svg)](https://docs.rs/r2d2-memcache/)
 
+## Note
+
+The [memcache](https://crates.io/crates/memcache) crate has shipped its own connection pool (backed by r2d2) since 0.15, so a `memcache::Client` built with `Client::builder().with_max_pool_size(n)` already does what this crate does. This crate is kept for backward compatibility with existing code that pools `memcache::Client` through r2d2. New projects should use the `memcache` crate directly.
+
 ## Install
 
 Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-r2d2-memcache = "0.2.0"
+r2d2-memcache = "0.7.0"
 ```
 
 ## Basic Usage
 
 ```rust
-extern crate r2d2_memcache;
-
 fn main() {
     let manager = r2d2_memcache::MemcacheConnectionManager::new("memcache://localhost:11211");
     let pool = r2d2_memcache::r2d2::Pool::builder().max_size(15).build(manager).unwrap();
 
-    let mut conn = pool.get().unwrap();
+    let conn = pool.get().unwrap();
     conn.flush().unwrap();
     let value = "bar";
     conn.set("foo_get", value, 10).unwrap();
